@@ -1,0 +1,38 @@
+
+
+f.writelines("G21") #set units to mm
+f.writelines("G90") # use absolute coordinates
+f.writelines("M83") # i believe this means turn on motors for powder distributor
+f.writelines("G0 X-100 F3000") # turn laser off and move to safe distance
+f.writelines("T0") # select part bed piston
+f.writelines("G0 E0.15 F200") #lower part bed piston by 150 microns
+f.writelines("T1") #select feed piston
+f.writelines("G0 E0.45 F200") #lower feed piston by 450 microns, Andreas' previous work showed that this layer height works best for dispersion
+f.writelines("G0 Z-244 F3000") #move plow to 244mm at that speed
+f.writelines("G0 Z0 F3000") #move wiper back to origin
+
+var onlaserspeed=500;
+var offlaserspeed=7800;
+
+for (i=0, i<10)
+{
+   f.writelines("G0 E0.15 F200") #lower part bed piston by 150 microns
+   f.writelines("T1") #select feed piston
+   f.writelines("G0 E0.45 F200") #lower feed piston by 450 microns, Andreas' previous work showed that this layer height works best for dispersion
+   f.writelines("G0 Z-244 F3000") #move plow to 244mm at that speed
+   f.writelines("G0 Z0 F3000") #move wiper back to origin
+   i=i+1;
+   
+   for (j=0, j<15)
+   {
+
+       f.writelines("G0 X " j+15 " Y " j+40 " F" offlaserspeed)
+       f.writelines("G1 X " j+15 " Y " j+40 " F" onlaserspeed)
+       
+        G1 X10 Y50 F500.000; top left corner of rectangle
+        G1 X40 Y50 F500.000
+}
+
+
+fname = "curl_test.gcode"
+print "Preparing to output: " + fname
