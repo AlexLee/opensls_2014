@@ -1,0 +1,67 @@
+
+
+
+output = file("C:\Users\Alec\Desktop\python\curltest_ver6.gcode",'w') #write this fil
+
+laserpower = 18
+
+output.write('M649 S' + str(laserpower)+ '\n')
+output.write('G21'+ '\n') #set units to mm
+output.write('G90'+ '\n') # use absolute coordinates
+output.write('M83'+ '\n') # turn on motor for powder feeder
+
+startx = 20
+endx= 50
+starty = 20
+endy = 16
+movespeed = 7800
+scanspeed = 500
+firstscanspeed = 100
+
+startlayer = 0
+finallayer = 9 
+feedlayer =.45
+partlayer=.15
+plowspeed=3000
+
+output.write('; The first layer \n') 
+#getting a full melt on that first layer is so important. Will try different scanning strategies
+def drange2(start, stop, step):
+    numelements = int((stop-start)/float(step))
+    for y in range(numelements+1):
+        yield start + y*step
+for y in drange2(starty,endy+starty, 0.5):
+    output.write('G0 X' + str(startx) + ' Y' + str(y)+' F' + str(movespeed)+'\n')
+    output.write('G1 X' + str(endx) + ' Y' + str(y)+' F' + str(firstscanspeed)+'\n')
+
+#first loop is for layer changes, 2nd is for scanning horizontal lines
+for z in range (startlayer, finallayer):
+    output.write('G0 X-100 F3000; end of layer' +'\n')
+    output.write('T0 ' +'\n') # partbed piston
+    output.write('G0 E' + str(partlayer) +' F200' +'\n')
+    output.write('T1' +'\n') #feeder piston
+    output.write('G0 E' + str(feedlayer) +' F200' +'\n')
+    output.write('G0 Z-244 F' +str(plowspeed) +'\n') #moving plow
+    output.write('G0 Z0 F' +str(plowspeed) +'\n') #bring plow back
+#drange2 is used to change Y increments,
+    def drange2(start, stop, step):
+        numelements = int((stop-start)/float(step))
+        for y in range(numelements+1):
+            yield start + y*step
+    #this for loop is for scanning the horizontal lines        
+    for y in drange2(starty,endy+starty, 0.5):
+        output.write('G0 X' + str(startx) + ' Y' + str(y)+' F' + str(movespeed)+'\n')
+        output.write('G1 X' + str(endx) + ' Y' + str(y)+' F' + str(scanspeed)+'\n')
+    
+output.write('G0 X-200 F3000; turn off laser, done with build')
+output.close()
+
+
+
+
+
+
+
+
+
+
