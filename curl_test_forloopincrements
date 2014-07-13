@@ -1,0 +1,32 @@
+
+
+
+output = file("C:\Users\Alec\Desktop\python\curltest_forloopincrements.gcode",'w') #write this fil
+start = file("C:\Users\Alec\Desktop\python\start.txt",'r')
+
+for line in start: 
+    output.write(line)
+output.write('\n')
+power = 18
+
+output.write('M649 S' + str(power)+ '\n')
+
+
+
+startx = 20
+endx= 50
+starty = 20
+endy = 16
+move = 7800
+laser = 500
+
+def drange2(start, stop, step):
+    numelements = int((stop-start)/float(step))
+    for i in range(numelements+1):
+            yield start + i*step
+for i in drange2(starty, endy+starty, 0.5):
+    output.write('G0 X' + str(startx) + ' Y' + str(i)+' F' + str(move)+'\n')
+    output.write('G1 X' + str(endx) + ' Y' + str(i)+' F' + str(laser)+'\n')
+
+output.write('G0 X-200 F3000; turn off laser, done with build')
+output.close()
